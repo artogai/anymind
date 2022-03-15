@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+package dev.ogai.anymind.model;
+
+message Amount {
+  required int64 datetime = 1;
+  required double amount = 2;
+}
+
+message TimeRange {
+  required int64 startDatetime = 1;
+  required int64 endDatetime = 2;
+}
+
+message StatsMessage {
+  oneof sealed_value_optional {
+    StatsRequest req = 1;
+    StatsResponse resp = 2;
+  }
+}
+
+message StatsRequest {
+  required string id = 1;
+  required TimeRange range = 2;
+}
+
+message StatsResponse {
+  required string id = 1;
+  required Amount amount = 2;
+  required bool isFinal = 3;
+}

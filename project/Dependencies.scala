@@ -4,16 +4,16 @@ import sbt._
 object Dependencies {
 
   object version {
-    val akka     = "2.6.18"
-    val akkaHttp = "10.2.9"
-    val alpakka  = "2.1.0"
-    val kafka    = "2.8.1"
-    val scalaPb  = "0.11.8"
-    val protobuf = "3.12.0"
-    val newtype  = "0.4.4"
-    val circe    = "0.14.1"
-    val slf4j    = "1.7.33"
-    val logback  = "1.2.10"
+    val akka          = "2.6.18"
+    val akkaHttp      = "10.2.9"
+    val akkaHttpCirce = "1.39.2"
+    val alpakka       = "2.1.1"
+    val kafka         = "2.8.1"
+    val scalaPb       = "0.11.8"
+    def rocksdb       = "6.28.2"
+    val circe         = "0.14.1"
+    val slf4j         = "1.7.33"
+    val logback       = "1.2.10"
 
     val organizeImports  = "0.6.0"
     val kindProjector    = "0.13.2"
@@ -21,10 +21,11 @@ object Dependencies {
   }
 
   object akka {
-    def actor   = "com.typesafe.akka" %% "akka-actor-typed" % version.akka
-    def stream  = "com.typesafe.akka" %% "akka-stream"      % version.akka
-    def http    = "com.typesafe.akka" %% "akka-http"        % version.akkaHttp
-    def alpakka = "com.typesafe.akka" %% "alpakka-kafka"    % version.alpakka
+    def actor     = "com.typesafe.akka" %% "akka-actor"        % version.akka
+    def stream    = "com.typesafe.akka" %% "akka-stream"       % version.akka
+    def http      = "com.typesafe.akka" %% "akka-http"         % version.akkaHttp
+    def alpakka   = "com.typesafe.akka" %% "akka-stream-kafka" % version.alpakka
+    def httpCirce = "de.heikoseeberger" %% "akka-http-circe"   % version.akkaHttpCirce
   }
 
   object kafka {
@@ -43,7 +44,7 @@ object Dependencies {
     def all = Seq(core, generic, parser)
   }
 
-  def newtype = "io.estatico" %% "newtype" % version.newtype
+  def rocksdb = "org.rocksdb" % "rocksdbjni" % version.rocksdb
 
   object logging {
 

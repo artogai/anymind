@@ -15,6 +15,7 @@ object SubModule extends AutoPlugin {
     libraryDependencies ++= lib.logging.default,
     excludeDependencies ++= lib.exclude,
     Test / fork            := true,
+    IntegrationTest / fork := true,
   ) ++
     Defaults.itSettings
 
