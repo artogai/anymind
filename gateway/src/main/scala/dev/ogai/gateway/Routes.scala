@@ -22,8 +22,8 @@ object Routes {
                 complete(StatusCodes.BadRequest)
               else
                 onSuccess(walletClient.post(amount)) {
-                _.complete(StatusCodes.OK)
-              }
+                  _.complete(StatusCodes.OK)
+                }
             }
           }
         },
@@ -31,9 +31,9 @@ object Routes {
           post {
             entity(as[TimeRange]) { range =>
               if ((range.endDatetime - range.startDatetime) / 60 <= 0)
-                complete(walletClient.stats(range))
-              else
                 complete(StatusCodes.BadRequest)
+              else
+                complete(walletClient.stats(range))
             }
           }
         },
