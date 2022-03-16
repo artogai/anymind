@@ -8,13 +8,13 @@ addCommandAlias(
 )
 addCommandAlias(
   "compileAll",
-  "compile; Test / compile; IntegrationTest / compile"
+  "compile; Test / compile; IntegrationTest / compile",
 )
 addCommandAlias(
   "itTest",
-  "IntegrationTest / test"
+  "IntegrationTest / test",
 )
 addCommandAlias(
   "testAll",
-  "test; IntegrationTest / test"
+  "test; IntegrationTest / test",
 )

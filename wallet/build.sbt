@@ -6,3 +6,7 @@ libraryDependencies ++=
     lib.rocksdb,
   )
 
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+
+dockerExposedVolumes := Seq("/opt/docker/rocksdb")

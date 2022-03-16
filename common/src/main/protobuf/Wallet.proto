@@ -4,7 +4,7 @@ package dev.ogai.anymind.model;
 
 message Amount {
   required int64 datetime = 1;
-  required double amount = 2;
+  required int64 satoshi = 2;
 }
 
 message TimeRange {

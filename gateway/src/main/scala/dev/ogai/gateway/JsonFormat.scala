@@ -1,29 +1,27 @@
 package dev.ogai.gateway
 
+import java.time.{ Instant, OffsetDateTime, ZoneId }
+
+import dev.ogai.anymind.model.Wallet.{ Amount, TimeRange }
 import io.circe.syntax._
-import dev.ogai.anymind.model.Wallet.TimeRange
-import dev.ogai.anymind.model.Wallet.Amount
-import java.time.OffsetDateTime
-import java.time.Instant
-import java.time.ZoneId
-import io.circe.Decoder
-import io.circe.Encoder
-import io.circe.Json
+import io.circe.{ Decoder, Encoder, Json }
 
 object JsonFormat {
+
   implicit val amountDecoder: Decoder[Amount] =
     json =>
       for {
         datetime <- json.get[OffsetDateTime]("datetime")
-        amount   <- json.get[Double]("amount")
-      } yield Amount(datetime.toEpochSecond(), amount)
+        amount   <- json.get[BigDecimal]("amount")
+        satoshi = toSatoshi(amount)
+      } yield Amount(datetime.toEpochSecond(), satoshi)
 
   implicit val amountEncoder: Encoder[Amount] = {
     val utc = ZoneId.of("UTC")
     amount =>
       Json.obj(
         "datetime" -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(amount.datetime), utc).asJson,
-        "amount"   -> amount.amount.asJson,
+        "amount"   -> fromSatoshi(amount.satoshi).asJson,
       )
   }
 
@@ -33,4 +31,11 @@ object JsonFormat {
         startDateTime <- json.get[OffsetDateTime]("startDatetime")
         endDateTime   <- json.get[OffsetDateTime]("endDateTime")
       } yield TimeRange(startDateTime.toEpochSecond(), endDateTime.toEpochSecond())
+
+  private val satoshiInBtc = 100000000
+  private def toSatoshi(amount: BigDecimal): Long =
+    (amount * satoshiInBtc).toLongExact
+  private def fromSatoshi(satoshi: Long): BigDecimal =
+    BigDecimal(satoshi) / satoshiInBtc
+
 }

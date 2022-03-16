@@ -7,3 +7,6 @@ libraryDependencies ++=
     lib.akka.alpakka,
   )
 
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+dockerExposedPorts := Seq(8080)

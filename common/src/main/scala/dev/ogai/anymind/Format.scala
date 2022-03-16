@@ -1,7 +1,8 @@
 package dev.ogai.anymind
 
-import scalapb.{ GeneratedMessage, GeneratedMessageCompanion }
 import scala.util.Try
+
+import scalapb.{ GeneratedMessage, GeneratedMessageCompanion }
 
 trait Format[A] {
   def encode(v: A): Array[Byte]

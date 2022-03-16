@@ -3,17 +3,16 @@ package dev.ogai.gateway
 import java.util.UUID
 
 import scala.collection.mutable
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.util.Failure
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.actor.{ Actor, ActorRef, ActorSystem, Props }
+import akka.event.Logging
 import akka.pattern.pipe
 import akka.stream.scaladsl.Source
-import akka.stream.{CompletionStrategy, OverflowStrategy}
-import akka.{Done, NotUsed}
-import dev.ogai.anymind.model.Wallet.{Amount, StatsRequest, StatsResponse, TimeRange}
-import scala.util.Failure
-import akka.event.Logging
-import scala.concurrent.ExecutionContext
+import akka.stream.{ CompletionStrategy, OverflowStrategy }
+import akka.{ Done, NotUsed }
+import dev.ogai.anymind.model.Wallet.{ Amount, StatsRequest, StatsResponse, TimeRange }
 
 trait WalletClient {
   def post(amount: Amount): Future[Unit]
@@ -22,9 +21,9 @@ trait WalletClient {
 
 object WalletClient {
 
-  def apply(kafka: KafkaClient)(implicit system: ActorSystem, ec: ExecutionContext): WalletClient = {
+  def apply(kafka: KafkaClient, cfg: Config)(implicit system: ActorSystem, ec: ExecutionContext): WalletClient = {
     val statsReqRouter = system.actorOf(Props(classOf[WalletStats.Router], kafka))
-    val logger = Logging(system, this.getClass())
+    val logger         = Logging(system, this.getClass())
 
     kafka
       .subscribeResponses()
@@ -61,6 +60,7 @@ object WalletClient {
             bufferSize = 100,
             overflowStrategy = OverflowStrategy.fail,
           )
+          .idleTimeout(cfg.responseTimeout)
           .preMaterialize()
 
         val req = StatsRequest(UUID.randomUUID().toString(), range)
@@ -94,14 +94,14 @@ object WalletStats {
           requests
             .remove(resp.id)
             .foreach { ref =>
-              ref ! resp
+              ref ! resp.amount
               ref ! Done
             }
         } else {
           requests
             .get(resp.id)
             .foreach { ref =>
-              ref ! resp
+              ref ! resp.amount
             }
         }
       case err: Error =>
